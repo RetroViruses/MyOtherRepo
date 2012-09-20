@@ -1,0 +1,44 @@
+/**
+ * readList method adds into the social network list from a file
+ * @param fileName	filename of file that contains friend information
+ */
+	 public void readList (String fileName) throws Exception {		  
+		
+		// create object that controls file reading and opens the file
+		         
+		InStringFile reader = new InStringFile(fileName);
+		System.out.println("\nReading from file " + fileName + "\n");
+
+		// read data from file one line at a time
+		  
+		String line;
+		StringTokenizer tokenizer;
+		String firstName, lastName, email;
+		int year, month, day;
+		do
+		{
+		  line = (reader.read());
+		  
+		  // get person info from line read in from file, one at a time,
+		  // Note: it is assumed that each line of the disk file will have
+                  // all 6 items, separated by white space
+
+		  tokenizer = new StringTokenizer(line);
+		  firstName = tokenizer.nextToken();
+		  lastName = tokenizer.nextToken();
+		  email = tokenizer.nextToken();
+		  year = Integer.parseInt(tokenizer.nextToken());
+		  month = Integer.parseInt(tokenizer.nextToken());
+		  day = Integer.parseInt(tokenizer.nextToken());
+
+		  // add person to the list (insert your code here)
+                  
+                  
+                  
+
+
+
+		}while (!reader.endOfFile()); 
+		   
+		reader.close(); 
+ 	}

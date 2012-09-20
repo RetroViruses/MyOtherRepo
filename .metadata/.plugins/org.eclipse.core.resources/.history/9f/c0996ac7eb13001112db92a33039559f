@@ -1,0 +1,120 @@
+import java.util.StringTokenizer;
+import java.io.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.IOException;
+public class Query {
+	static BufferedInputStream in;
+	
+
+	private static OrderedDictionary getFile(String name) {
+		BufferedReader inputStream = null;
+		String output="";
+		String tempName="";
+		String tempDef="";
+		OrderedDictionary newDict=new OrderedDictionary();
+		int tempType;
+		String [] listing = new String[100000];
+		int y=0;
+		try {
+			inputStream = new BufferedReader(new FileReader(name+".txt"));
+			output=inputStream.readLine();
+		}
+		catch (Exception e){
+		}
+		String fullList="";
+		try{
+				while (listing[y]!=null || y==0){
+					listing[y]=inputStream.readLine();
+					y=y+1;
+				}
+			}
+			catch(Exception e){
+				System.out.println(fullList);
+			}
+			for (int x=1;x<=y+1;x++){
+				if (x%2==1){
+					tempName=listing[x-1];
+				}
+				else{
+					tempDef=listing[x-1];
+				}
+				if (x%2==0 && tempDef!=null){
+					if (tempDef.contains(tempName+".")){
+						tempType=2;
+					}
+					else{
+						tempType=1;
+					}
+					try{
+					newDict.insert(tempName, tempDef, tempType);
+					}
+					catch (Exception e){
+						
+					}
+				}
+			}
+		return newDict;
+}
+	
+
+
+public static void main(String [] args){
+	OrderedDictionary dict=getFile("small");
+	boolean continu=true;
+	boolean failure=false;
+	String tokStore, tokStore2;
+	StringReader keyboard=new StringReader();
+	while (continu==true){
+		String line=keyboard.read(" Enter next command: ");
+		String[] result = line.split("\\s");
+			if (result[0].equals("define")){
+				System.out.println(dict.findWord(result[1]));
+			}
+			if (result[0].equals("end")){
+				continu=false;
+			}
+			if (result[0].equals("delete")){
+				try{
+				dict.remove(result[1]);
+				}
+				catch (Exception e){
+					System.out.println("deletion failed, try again");
+				}
+			}
+			if (result[0].equals("next")){
+				String tempNext=dict.successor(result[1]);
+				if (tempNext!="zzzzzzzzzzzzzzzz"){
+					System.out.println(tempNext);
+				}
+				else{
+					System.out.println("No successive word");
+				}
+			}
+			if (result[0].equals("previous")){
+				String tempPrev=dict.predecessor(result[1]);
+				if (tempPrev!=""){
+					System.out.println(tempPrev);
+				}
+				else{
+					System.out.println("No previous word");
+				}
+			}
+			if (result[0].equals("list")){
+				while (failure==false){
+					String tempList=dict.successor(result[1]);
+					if (tempList.startsWith(result[1])){
+						System.out.println(tempList);
+					}
+					else{
+						failure=true;
+					}
+				}
+			}
+			
+		}
+	}
+
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 1 elements(s) to &apos;Lab10/(default package)&apos;&#x0D;&#x0A;- Original project: &apos;Lab6&apos;&#x0D;&#x0A;- Destination element: &apos;Lab10/(default package)&apos;&#x0D;&#x0A;- Original element: &apos;EmptyCollectionException.java&apos;" description="Copy compilation unit" destination="/&lt;" element1="/&lt;{EmptyCollectionException.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" log="/&lt;{EmptyCollectionException.java&#x09;true&#x09;false" policy="org.eclipse.jdt.ui.copyResources" stamp="1311715562877" units="1" version="1.0"/>
+</session>

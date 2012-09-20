@@ -1,0 +1,154 @@
+import java.util.StringTokenizer;
+import java.io.*;
+public class Query {
+	static BufferedInputStream in;
+
+//	reads a file from outside the program
+	private static OrderedDictionary getFile(String name) {
+		BufferedReader inputStream = null;
+		String tempName="";
+		String tempDef="";
+		int storeList=0;
+		OrderedDictionary newDict=new OrderedDictionary();
+		int tempType=1;
+		String [] listing = new String[100000];
+		int y=0;
+		//finds the file
+		try {
+			inputStream = new BufferedReader(new FileReader(name+".txt"));
+		}
+		catch (Exception e){
+		}
+		String fullList="";
+		//reads the file
+		try{
+			while ((listing [y]=inputStream.readLine())!=null){
+				y=y+1;
+				listing[y]=inputStream.readLine();
+				y=y+1;
+				storeList=y;
+			}
+		}
+		catch(Exception e){
+			System.out.println(fullList);
+		}
+		//puts the file in a dictionary
+		for(int z=0;z<storeList-2;z++){
+			if (listing[z].length()==(listing[z+1].length()-4)){
+				tempType=2;
+			}
+			else{
+				tempType=1;
+			}
+			try{
+				newDict.insert(listing[z], listing[z+1], tempType);
+			}
+			catch(Exception e){
+
+			}
+		}
+		//returns the dictionary to where it was called
+		return newDict;
+	}
+
+
+	public static void main(String [] args){
+		OrderedDictionary dict=getFile("small");
+		boolean continu=true;
+		boolean failure=false;
+		String used="";
+		String tokStore, tokStore2;
+		StringReader keyboard=new StringReader();
+		//will loop until "end" is called
+		while (continu==true){
+			//asks for command
+			String line=keyboard.read(" Enter next command: ");
+			String[] result = line.split("\\s");
+			//list the acceptable command outcomes in a series of if statements
+			//defines a non-media element, plays a media element
+			if (result[0].equals("define")){
+				if (dict.findType(result[1])==2){
+					if (dict.findWord(result[1]).endsWith(".gif") || (dict.findWord(result[1]).endsWith(".jpg"))){
+						PictureViewer tempView=new PictureViewer();
+						try{
+							tempView.show(dict.findWord(result[1]));
+						}
+						catch (Exception e)
+						{
+							System.out.println(e);
+						}
+					}
+					else if (dict.findWord(result[1]).endsWith(".wav") || (dict.findWord(result[1]).endsWith(".mid"))){
+						SoundPlayer tempPlay=new SoundPlayer();
+						try{
+							tempPlay.play(dict.findWord(result[1]));
+						}
+						catch (Exception e)
+						{
+							System.out.println(e);
+						}
+					}
+
+				}
+				else{
+					System.out.println(dict.findWord(result[1]));
+				}
+			}
+			//stops the loop
+			if (result[0].equals("end")){
+				continu=false;
+			}
+			if (result[0].equals("delete")){
+				try{
+					dict.remove(result[1]);
+				}
+				catch (Exception e){
+					System.out.println("deletion failed, try again");
+				}
+			}
+			if (result[0].equals("next")){
+				try{
+					String tempNext=dict.successor(result[1]);
+					if (tempNext!="zzzzzzzzzzzzzzzz"){
+						System.out.println(tempNext);
+					}
+					else{
+						System.out.println("No successive word");
+					}
+				}
+				catch(Exception e){
+					System.out.println("Finding a successive word has failed");
+				}
+			}
+			if (result[0].equals("previous")){
+				try{
+					String tempPrev=dict.predecessor(result[1]);
+					if (tempPrev!=""){
+						System.out.println(tempPrev);
+					}
+					else{
+						System.out.println("No previous word");
+					}
+				}
+				catch(Exception e){
+					System.out.println("Finding previous word has failed");
+				}
+			}
+			if (result[0].equals("list")){
+				String tempList=dict.successor(result[1]);
+				while (failure==false){
+					tempList=dict.successor(result[1]);
+					if (tempList.startsWith(result[1]) && tempList!=used){
+						System.out.println(tempList);
+						used=tempList;
+					}
+					else{
+						failure=true;
+					}
+				}
+			}
+
+		}
+	}
+
+}

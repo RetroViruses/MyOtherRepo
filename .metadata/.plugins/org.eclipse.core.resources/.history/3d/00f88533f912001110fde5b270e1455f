@@ -1,0 +1,5 @@
+
+public class Node {
+	DictEntry root;
+	public Node(String word, String def, int type)
+}

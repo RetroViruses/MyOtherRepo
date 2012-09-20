@@ -1,0 +1,28 @@
+
+public class DictEntry {
+	String tempWord="";
+	String tempDef="";
+	int tempType=0;
+	DictEntry left;
+	DictEntry right;
+	public DictEntry(String word, String def, int type){
+		tempWord=word;
+		tempDef=def;
+		tempType=type;
+	}
+	public String word(){
+		return tempWord;
+	}
+	public String definition(){
+		return tempDef;
+	}
+	public int type(){
+		return tempType;
+	}
+	public void setLeft(DictEntry newLeft){
+		left=newLeft;
+	}
+	public void setRight(DictEntry newRight){
+		right=newRight;
+	}
+}

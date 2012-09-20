@@ -1,0 +1,142 @@
+import java.util.StringTokenizer;
+import java.io.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.IOException;
+public class Query {
+	static BufferedInputStream in;
+	/*private static int getFile(String name)
+	// **************************************************
+	{
+		String inpuName=name+".txt";
+
+		try {
+			in = new BufferedInputStream(new FileInputStream(inpuName));
+			return 1;
+		}
+		catch (Exception e) {
+			System.out.println("Input file cannot be opened" + name);
+			return 0;
+		}
+	}
+	 */
+
+	private static OrderedDictionary getFile(String name) {
+		BufferedReader inputStream = null;
+		String output="";
+		String tempName="";
+		String tempDef="";
+		OrderedDictionary newDict=new OrderedDictionary();
+		int tempType;
+		String [] listing;
+		/*try{
+			output = inputStream.readLine();
+		}
+		catch (Exception e){
+			output="";
+		}*/
+		try {
+			inputStream = new BufferedReader(new FileReader(name+".txt"));
+			output=inputStream.readLine();
+		}
+		catch (Exception e){
+		}
+		String fullList="";
+		try{
+				int y=0;
+				while (listing[y]!=null){
+					listing[y]=inputStream.readLine();
+					y=y+1;
+				}
+			}
+			catch(Exception e){
+				System.out.println(fullList);
+			}
+				if (x%2==1){
+					tempName=output;
+				}
+				else{
+					tempDef=output;
+				}
+				if (2%x==0){
+					if (tempDef.contains(tempName+".")){
+						tempType=2;
+					}
+					else{
+						tempType=1;
+					}
+					try{
+					newDict.insert(tempName, tempDef, tempType);
+					}
+					catch (Exception e){
+						
+					}
+				}
+		//catch(Exception e){
+		//}
+		return newDict;
+}
+	
+
+
+public static void main(String [] args){
+	OrderedDictionary dict=getFile("small");
+	boolean continu=true;
+	boolean failure=false;
+	String tokStore, tokStore2;
+	StringReader keyboard=new StringReader();
+	while (continu==true){
+		String line=keyboard.read(" Enter next command: ");
+		String[] result = line.split("\\s");
+		//while (tok.hasMoreTokens()) {
+			//tokStore=tok.nextToken();
+			if (result[0].equals("define")){
+				System.out.println(dict.findWord(result[1]));
+			}
+			if (result[0].equals("end")){
+				continu=false;
+			}
+			if (result[0].equals("delete")){
+				try{
+				dict.remove(result[1]);
+				}
+				catch (Exception e){
+					System.out.println("deletion failed, try again");
+				}
+			}
+			if (result[0].equals("next")){
+				String tempNext=dict.successor(result[1]);
+				if (tempNext!="zzzzzzzzzzzzzzzz"){
+					System.out.println(tempNext);
+				}
+				else{
+					System.out.println("No successive word");
+				}
+			}
+			if (result[0].equals("previous")){
+				String tempPrev=dict.predecessor(result[1]);
+				if (tempPrev!=""){
+					System.out.println(tempPrev);
+				}
+				else{
+					System.out.println("No previous word");
+				}
+			}
+			if (result[0].equals("list")){
+				while (failure==false){
+					String tempList=dict.successor(result[1]);
+					if (tempList.startsWith(result[1])){
+						System.out.println(tempList);
+					}
+					else{
+						failure=true;
+					}
+				}
+			}
+			
+		}
+	}
+
+}

@@ -1,0 +1,327 @@
+
+public class OrderedDictionary implements OrderedDictionaryADT {
+	DictEntry root=null;
+	String closest="zzzzzzzzzzzzzzzz";
+	String precClosest="";
+	int escapeRecur=0;
+	String removeWord1="a", removeWord2="";
+	String origWord="";
+	public OrderedDictionary(){
+
+	}
+	public String findWord (String word){
+		DictEntry tempRoot=root;
+		while (tempRoot!=null){
+			int direct;
+			direct=word.compareTo(tempRoot.word());
+			if (direct==0){
+				return tempRoot.definition();
+			}
+			else if (direct<0){
+				tempRoot=tempRoot.getLeft();
+			}
+			else if (direct>0){
+				tempRoot=tempRoot.getRight();
+			}
+		}
+		return "";
+
+	}
+	/* Returns the definition of the given word, or it returns
+                      an empty string if the word is not in the dictionary.    */
+
+	public int findType (String word){
+		DictEntry tempRoot=root;
+		while (tempRoot!=null){
+			int direct;
+			direct=word.compareTo(tempRoot.word());
+			if (direct==0){
+				return tempRoot.type();
+			}
+			else if (direct<0){
+				tempRoot=tempRoot.getLeft();
+			}
+			else if (direct>0){
+				tempRoot=tempRoot.getRight();
+			}
+		}
+		return -1;
+	}
+	/* Returns the type of the given word, or it returns
+                      -1 if the word is not in the dictionary.    */
+
+	public void insert (String word, String definition, int type) throws DictionaryException{
+		DictEntry tempRoot=root;
+		int escapeLoop=0;
+		DictEntry newNode=new DictEntry(word, definition, type);
+		if (root==null || root.word()==""){
+			root=newNode;
+		}
+		else{
+			while (escapeLoop==0){
+				int direction=word.compareTo(tempRoot.word());
+				if (direction==0){
+					throw new DictionaryException("The word is already in the dictionary");
+				}
+				else if (direction<0){
+					if (tempRoot.getLeft()==null){
+						tempRoot.setLeft(newNode);
+						escapeLoop=1;
+					}
+					else{
+						tempRoot=tempRoot.getLeft();
+					}
+				}
+				else if (direction>0){
+					if (tempRoot.getRight()==null){
+						tempRoot.setRight(newNode);
+						escapeLoop=-1;
+					}
+					else{
+						tempRoot=tempRoot.getRight();
+					}
+				}
+			}
+		}
+		escapeLoop=0;
+	}
+
+	/* Adds the given word, its definition and type into the 
+		     dictionary. It throws an OrderedDictionaryException if the 
+		     word is already in the dictionary. */
+
+	public void remove (String word) throws DictionaryException{
+		removeWord1=word;
+		while (removeWord1!=""){
+			origWord=removeWord1;
+			removeWord1=successful(root, removeWord1);
+			if (removeWord1!=""){
+				removeWord2=removeWord1;
+			}
+		}
+		root=removal(root, word, removeWord1);
+		removeWord1="a";
+		removeWord2="";
+		escapeRecur=0;
+	}
+
+	/*  Removes the entry with the given word from the dictionary.
+                     It throws an OrderedDictionaryException if the word is not
+                     in the dictionary.   */
+
+	public String successor (String word){
+		closest="zzzzzzzzzzzzzzzz";
+		return successful(root, word);
+		
+	}
+	/* Returns the successor of the given word (the word from the
+                    dictionary that lexicographically follows the given one); it
+                    returns an empty string if the given word has no successor. */
+
+	public String predecessor (String word){
+		precClosest="";
+		return proceeding(root, word);
+	}
+	/* Returns the predecessor of the given word (the word from the
+                    dictionary that lexicographically precedes the given one); it
+                    returns an empty string if the given word has no predecessor. */
+	private DictEntry replace(DictEntry repl) 
+	{
+		DictEntry result = null;
+
+		if ((repl.getLeft() == null)&&(repl.getRight()==null))
+			result = null;
+		else if ((repl.left != null)&&(repl.right==null))
+			result = repl.left;
+		else if ((repl.left == null)&&(repl.right != null))
+			result = repl.right;
+		else
+		{
+			DictEntry current = repl.right;
+			DictEntry parent = repl;
+
+			while (current.left != null) 
+			{
+				parent = current;
+				current = current.left;
+			}//while
+
+			if (repl.right == current)
+				current.left = repl.left;
+			else
+			{
+				parent.left = current.right;
+				current.right = repl.right;
+				current.left = repl.left;
+			}
+			result = current;
+		}//else
+		return result;
+	}
+	private DictEntry removal(DictEntry store, String word, String stopper) throws DictionaryException{
+		if (store.word()==word){
+			store.setWord("");
+			store.setDef(null);
+			store.setType(0);
+			escapeRecur=1;
+			System.out.println(word + "removed");
+			return store;
+		}
+		else{
+			if (store.left!=null){
+				removal(store.getLeft(), word, stopper);
+			}
+			if (store.right!=null){
+				removal(store.getRight(), word, stopper);
+			}
+		}
+
+		if (escapeRecur==1){
+			return store;
+		}
+		else if (store.word().compareTo(stopper)>=0){
+			throw new DictionaryException("word not found");
+		}
+		return store;
+	}
+
+	private String successful(DictEntry store, String word){
+		if (store.word().compareTo(word)>0 && store.word().compareTo(closest)<0){
+			closest=store.word();
+		}
+		//else{
+			if (store.left!=null){
+				successful(store.getLeft(), word);
+			}
+			if (store.right!=null){
+				successful(store.getRight(), word);
+			}
+		//}
+			if (closest.compareTo(origWord)==0){
+				return "";
+			}
+		return closest;
+	}
+
+	private String proceeding(DictEntry store, String word){
+		if (store.word().compareTo(word)<0 && store.word().compareTo(precClosest)>0){
+			precClosest=store.word();
+		}
+		//else{
+			if (store.left!=null){
+				proceeding(store.getLeft(), word);
+			}
+			if (store.right!=null){
+				proceeding(store.getRight(), word);
+			}
+		//}
+		return precClosest;
+	}
+
+}
+
+//////////////////////Extra Code
+//remove
+/*int direct;
+DictEntry tempRoot=root;
+DictEntry tempRootStore=root.getLeft();
+DictEntry current, parent = root;
+boolean found = false;
+//String order="";
+//while (tempRoot!=null){
+	direct=word.compareTo(root.word());
+	/*if (direct==0){
+		if (tempRoot.getLeft()!=null){
+			tempRoot=tempRoot.getLeft();
+		}
+		else if (tempRoot.getRight()!=null){
+			tempRoot=tempRoot.getRight();
+		}
+		else{
+			tempRoot=null;
+		}
+	}
+ */
+/*
+	if (direct==0){
+		current=null;
+	}
+    if (direct < 0){
+       current = root.getLeft();
+    }
+    else{
+       current = root.getRight();
+    }
+    while (current != null && !found) 
+    {
+       if (word.equals(current.word())) 
+       {
+          found = true;
+          tempRootStore =  current;
+          current=null;
+  /*
+          if (current == parent.getLeft()){
+             parent.left = replace (current);
+          }
+          else{
+             parent.right = replace (current);
+          }
+ */
+//} //if
+/*
+      else 
+      {
+          parent = current;
+
+          if (direct < 0){
+             current = current.getLeft();
+          }
+          else{
+             current = current.getRight();
+          }
+       } //else
+    } //while
+    if (!found)
+       throw new DictionaryException("The word was not found");
+ } //else
+	/*else if (direct<0){
+		tempRoot=tempRoot.getLeft();
+	}
+	else if (direct>0){
+		tempRoot=tempRoot.getRight();
+	}
+ */
+//successor
+/*DictEntry tempRoot=root;
+int escapeLoop=0;
+String closest="";
+while (escapeLoop==0){
+	int direction=word.compareTo(tempRoot.word());
+	if (direction==0){
+		if (tempRoot.getRight()!=null){
+			closest=tempRoot.getRight().word();
+		}
+	}
+	else if (direction<0){
+		if (tempRoot.getLeft()==null && tempRoot.word().compareTo(closest)>0){
+			closest=tempRoot.word();
+		}
+		else{
+			tempRoot=tempRoot.getLeft();
+		}
+	}
+	else if (direction>0){
+		if (tempRoot.getLeft()==null && tempRoot.word().compareTo(closest)>0){
+		closest=tempRoot.word();
+	}
+		else{
+			tempRoot=tempRoot.getRight();
+		}
+	}
+	if (tempRoot.getLeft()==null && tempRoot.getRight()==null){
+		escapeLoop=1;
+	}
+}
+escapeLoop=0;
+return closest;
+ */

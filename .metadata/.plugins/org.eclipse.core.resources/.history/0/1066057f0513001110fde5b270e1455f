@@ -1,0 +1,51 @@
+
+public class DictEntry {
+	String tempWord="";
+	String tempDef="";
+	int tempType=0;
+	DictEntry left;
+	DictEntry right;
+	DictEntry parent;
+	public DictEntry(String word, String def, int type){
+		tempWord=word;
+		tempDef=def;
+		tempType=type;
+	}
+	public String word(){
+		return tempWord;
+	}
+	public String definition(){
+		return tempDef;
+	}
+	public int type(){
+		return tempType;
+	}
+	public void setWord(String newWord){
+		tempWord=newWord;
+	}
+	public void setDef(String newDef){
+		tempDef=newDef;
+	}
+	public void setType(int newType){
+		tempType=newType;
+	}
+	public void setLeft(DictEntry newLeft, DictEntry parents){
+		left=newLeft;
+		left.setParent(parents);
+	}
+	public void setRight(DictEntry newRight){
+		right=newRight;
+	}
+	public void setParent(DictEntry parental){
+		parent=parental;
+	}
+	public DictEntry getParent(){
+		return parent;
+	}
+	public DictEntry getLeft(){
+		return left;
+	}
+	public DictEntry getRight(){
+		return right;
+	}
+}

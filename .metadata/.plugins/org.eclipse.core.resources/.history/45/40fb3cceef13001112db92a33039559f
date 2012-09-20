@@ -1,0 +1,152 @@
+import java.util.StringTokenizer;
+import java.io.*;
+public class Query {
+	static BufferedInputStream in;
+	
+
+	private static OrderedDictionary getFile(String name) {
+		BufferedReader inputStream = null;
+		//String output="";
+		String tempName="";
+		String tempDef="";
+		OrderedDictionary newDict=new OrderedDictionary();
+		int tempType;
+		String [] listing = new String[100000];
+		int y=0;
+		try {
+			inputStream = new BufferedReader(new FileReader(name+".txt"));
+			//output=inputStream.readLine();
+		}
+		catch (Exception e){
+		}
+		String fullList="";
+		try{
+				while (listing[y]!=null || y==0){
+					listing[y]=inputStream.readLine();
+					y=y+1;
+				}
+			}
+			catch(Exception e){
+				System.out.println(fullList);
+			}
+			/*for (int x=1;x<=y+1;x++){
+				if (x%2==1){
+					tempName=listing[x];
+				}
+				else{
+					tempDef=listing[x];
+				}
+				if (x%2==0 && tempDef!=null){
+					if (tempDef.contains(tempName+".")){
+						tempType=2;
+					}
+					else{
+						tempType=1;
+					}
+					try{
+					newDict.insert(tempName, tempDef, tempType);
+					}
+					catch (Exception e){
+						
+					}
+				}
+			}*/
+			for(int z=0;z<listing.length-2;z++){
+
+				/*if (listing[z+1].contains(listing[z]+".")){
+					tempType=2;
+				}
+				else{
+					tempType=1;
+				}*/
+				try{
+				newDict.insert(listing[z], listing[z+1], 1);
+				}
+				catch(Exception e){
+					
+				}
+			}
+		return newDict;
+}
+	
+
+	public static String successfulStatic(DictEntry store, String word, String close, String oriWord){
+		if (store.word().compareTo(word)>0 && store.word().compareTo(close)<0){
+			close=store.word();
+		}
+		//else{
+			if (store.left!=null){
+				successfulStatic(store.getLeft(), word, close, oriWord);
+			}
+			if (store.right!=null){
+				successfulStatic(store.getRight(), word, close, oriWord);
+			}
+		//}
+			if (close.compareTo(oriWord)==0){
+				return "";
+			}
+		return close;
+	}
+
+public static void main(String [] args){
+	OrderedDictionary dict=getFile("small");
+	boolean continu=true;
+	boolean failure=false;
+	String tokStore, tokStore2;
+	StringReader keyboard=new StringReader();
+	while (continu==true){
+		String line=keyboard.read(" Enter next command: ");
+		String[] result = line.split("\\s");
+			if (result[0].equals("define")){
+				System.out.println(dict.findWord(result[1]));
+			}
+			if (result[0].equals("end")){
+				continu=false;
+			}
+			if (result[0].equals("delete")){
+				try{
+				dict.remove(result[1]);
+				}
+				catch (Exception e){
+					System.out.println("deletion failed, try again");
+				}
+			}
+			if (result[0].equals("next")){
+				try{
+					String tempNext=successfulStatic(dict.root, result[1], "zzzzzzzzzzzzzzzz", result[1]);
+					if (tempNext!="zzzzzzzzzzzzzzzz"){
+						System.out.println(tempNext);
+					}
+					else{
+						System.out.println("No successive word");
+					}
+				}
+				catch(Exception e){
+					System.out.println("Finding a successive word has failed");
+				}
+			}
+			if (result[0].equals("previous")){
+				String tempPrev=dict.predecessor(result[1]);
+				if (tempPrev!=""){
+					System.out.println(tempPrev);
+				}
+				else{
+					System.out.println("No previous word");
+				}
+			}
+			if (result[0].equals("list")){
+				while (failure==false){
+					String tempList=dict.successor(result[1]);
+					if (tempList.startsWith(result[1])){
+						System.out.println(tempList);
+					}
+					else{
+						failure=true;
+					}
+				}
+			}
+			
+		}
+	}
+
+}
